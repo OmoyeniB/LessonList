@@ -17,3 +17,14 @@ extension UIFont {
     static func productSansRegular(size: CGFloat = 14) -> UIFont { UIFont(name: "ProductSans-Regular", size: size) ?? UIFont.systemFont(ofSize: size) }
 }
 
+extension CGSize {
+    
+    init(height: CGFloat) {
+        self.init(width: 0, height: height)
+    }
+    
+    init(width: CGFloat) {
+        self.init(width: 0, height: 0)
+    }
+}
+
