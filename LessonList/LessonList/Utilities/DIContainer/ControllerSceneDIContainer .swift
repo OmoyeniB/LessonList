@@ -10,14 +10,21 @@ import UIKit
 final class ControllerSceneDIContainer {
     
     static let sharedInstance = ControllerSceneDIContainer()
-    
-    func makeLessonListControllerInjectible() -> LessonListController {
-        let vc = LessonListController()
+    var movieList: (lesson: StoredLessonModel, arrayOfLesson: [StoredLessonModel], totalCount: Int, currentCount: Int)?
+    var lessonListViewModel: LessonListViewModel? = nil
+
+    func makeLessonListSwiftUIInjectible() -> LessonVideoListView {
+        let vc = LessonVideoListView()
         return vc
     }
     
-    func makeDetailsControllerInjectible(navigationController: UINavigationController) {
+    func makeDetailPageInjectable() -> UINavigationController {
         let vc = LessonDetailsController()
-        navigationController.pushViewController(vc, animated: true)
+        let navigationController = UINavigationController(rootViewController: vc)
+        vc.lessonList = movieList
+        vc.lessonListViewModel = lessonListViewModel
+        return navigationController
     }
+
+
 }
