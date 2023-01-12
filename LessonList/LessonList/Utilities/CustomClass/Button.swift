@@ -13,14 +13,13 @@ class Button: UIButton {
         super.init(frame: .zero)
     }
     
-    convenience init(btnTitle: String, btnTextColor: UIColor, btnBackgroundColor: UIColor, buttonImage: String, edgeInset: UIEdgeInsets, position: UISemanticContentAttribute, textFont: UIFont? = .productSansBold(size: 16)) {
+    convenience init(btnTitle: String, btnTextColor: UIColor, btnBackgroundColor: UIColor, buttonImage: String, edgeInset: UIEdgeInsets?, textFont: UIFont? = .productSansBold(size: 16)) {
         self.init(frame: .zero)
         setTitle(btnTitle, for: .normal)
         setTitleColor(btnTextColor, for: .normal)
         backgroundColor = btnBackgroundColor
         setImage(UIImage(systemName: buttonImage), for: .normal)
-        titleEdgeInsets = edgeInset
-        semanticContentAttribute = position
+        titleEdgeInsets = edgeInset ?? UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
         titleLabel?.font = textFont
     }
     

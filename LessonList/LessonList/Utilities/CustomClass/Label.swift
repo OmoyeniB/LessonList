@@ -15,7 +15,7 @@ class Label: UILabel {
         font = .productSansRegular(size: 13)
     }
    
-    init(text: String, font: UIFont, numberOfLines: Int = 0, textColor: UIColor = .black, alignment: NSTextAlignment = .left, letterSpacing: CGFloat = 0, lineBreakMode: NSLineBreakMode = .byWordWrapping) {
+    init(text: String, font: UIFont, numberOfLines: Int = 0, textColor: UIColor = .white, alignment: NSTextAlignment = .left, letterSpacing: CGFloat = 0, lineBreakMode: NSLineBreakMode = .byWordWrapping) {
         super.init(frame: .zero)
         self.font = font
         self.text = text
