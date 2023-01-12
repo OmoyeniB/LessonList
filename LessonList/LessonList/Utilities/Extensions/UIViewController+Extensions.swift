@@ -31,7 +31,6 @@ extension UIViewController {
         
         let menuBarItem = UIBarButtonItem(customView: button)
         menuBarItem.customView?.widthAnchor.constraint(equalToConstant: width).isActive = true
-        menuBarItem.customView?.heightAnchor.constraint(equalToConstant: 20).isActive = true
         return menuBarItem
     }
     
