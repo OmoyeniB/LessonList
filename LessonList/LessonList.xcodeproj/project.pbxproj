@@ -26,6 +26,7 @@
 		585527EA296E9C28004EB833 /* LessonViewVideoList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 585527E9296E9C28004EB833 /* LessonViewVideoList.swift */; };
 		585527EC296EA63E004EB833 /* UIImageFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 585527EB296EA63E004EB833 /* UIImageFetcher.swift */; };
 		585527EE296EA804004EB833 /* DetailsViewRespresentableWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 585527ED296EA804004EB833 /* DetailsViewRespresentableWrapper.swift */; };
+		585527F829704373004EB833 /* ViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 585527F729704372004EB833 /* ViewModifiers.swift */; };
 		5865D981296D644300549E54 /* LessonListUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5865D980296D644300549E54 /* LessonListUITests.swift */; };
 		5865D983296D644300549E54 /* LessonListUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5865D982296D644300549E54 /* LessonListUITestsLaunchTests.swift */; };
 		5865D98B296D69DA00549E54 /* PersistenceService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5865D98A296D69DA00549E54 /* PersistenceService.swift */; };
@@ -84,6 +85,7 @@
 		585527E9296E9C28004EB833 /* LessonViewVideoList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonViewVideoList.swift; sourceTree = "<group>"; };
 		585527EB296EA63E004EB833 /* UIImageFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIImageFetcher.swift; sourceTree = "<group>"; };
 		585527ED296EA804004EB833 /* DetailsViewRespresentableWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsViewRespresentableWrapper.swift; sourceTree = "<group>"; };
+		585527F729704372004EB833 /* ViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModifiers.swift; sourceTree = "<group>"; };
 		5865D97E296D644200549E54 /* LessonListUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LessonListUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5865D980296D644300549E54 /* LessonListUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonListUITests.swift; sourceTree = "<group>"; };
 		5865D982296D644300549E54 /* LessonListUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonListUITestsLaunchTests.swift; sourceTree = "<group>"; };
@@ -184,6 +186,7 @@
 			children = (
 				585527ED296EA804004EB833 /* DetailsViewRespresentableWrapper.swift */,
 				585527E9296E9C28004EB833 /* LessonViewVideoList.swift */,
+				585527F729704372004EB833 /* ViewModifiers.swift */,
 			);
 			path = ViewHelpers;
 			sourceTree = "<group>";
@@ -531,6 +534,7 @@
 				585527AB296E12E6004EB833 /* LessonVideoListView.swift in Sources */,
 				58676E2729656BC0006ACCCA /* UIEdgeInset+Extensions.swift in Sources */,
 				580E079D296AA3A8001356FD /* LessonDetailsViewModel.swift in Sources */,
+				585527F829704373004EB833 /* ViewModifiers.swift in Sources */,
 				580E077C2965ACE7001356FD /* LessonDetailsController.swift in Sources */,
 				580E07842967266A001356FD /* NetworkManager.swift in Sources */,
 				58676E2229656ADD006ACCCA /* MainBaseController.swift in Sources */,
