@@ -76,8 +76,8 @@ extension LessonDetailsController {
             DispatchQueue.main.async { [weak self] in
                 if let self {
                     self.isNextLessonClicked = true
-                    self.updateCancelButton(int: Int(self.arrayOfLesson[self.currentCount + 1].id))
                     self.initializeView(with: self.arrayOfLesson[self.currentCount + 1])
+                    self.updateCancelButton(int: Int(self.arrayOfLesson[self.currentCount + 1].id))
                     let title = self.viewModel.isDownloaded(id: Int(self.arrayOfLesson[self.currentCount + 1].id))
                     self.downloadButton.setTitle(title, for: .normal)
                     self.updateViewConfig()
@@ -91,13 +91,14 @@ extension LessonDetailsController {
     }
     
     func updateViewConfig() {
-        updateUIAfterDownLoad()
         viewModel.getDataFromUserDefault()
+        updateUIAfterDownLoad()
         cancelButton.isHidden = true
     }
     
     @objc func labelTapped(_ sender: UITapGestureRecognizer) {
         lpLessonView.isHidden = true
+        print("lpwill Hide3333")
 //                playVideo_Stream_Video()
     }
     
@@ -110,5 +111,9 @@ extension LessonDetailsController: LessonDetailProtocol {
         playVideoCache(url: url)
     }
     
-    
+//    present(playerController, animated: true) {
+//                player.play()
+//            }
 }
+
+

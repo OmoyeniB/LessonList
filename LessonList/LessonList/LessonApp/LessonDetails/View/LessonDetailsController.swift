@@ -17,8 +17,8 @@ class LessonDetailsController: BaseViewController {
     let viewModel = LessonDetailsViewModel()
     var lessonListViewModel: LessonListViewModel? = nil
     let metaProvider = LPMetadataProvider()
-    @Published var lessonList: (lesson: StoredLessonModel, arrayOfLesson: [StoredLessonModel], totalCount: Int, currentCount: Int)?
-    @Published var currentCount = 0
+    var lessonList: (lesson: StoredLessonModel, arrayOfLesson: [StoredLessonModel], totalCount: Int, currentCount: Int)?
+    var currentCount = 0
     var lessonVideo: String = ""
     var totalCount = 0
     var arrayOfLesson = [StoredLessonModel]()
@@ -31,17 +31,17 @@ class LessonDetailsController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         showLoading()
-        unwrapObjects()
-        configureView()
-        onButtonTap()
         savedID = viewModel.alreadyDownloadedID
+        configureView()
+        unwrapObjects()
+        onButtonTap()
         view.backgroundColor = UIColor(named: "BlackColor")
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setUpNavigationBar()
         updateDownloadButton = UserDefaults.standard.bool(forKey: "downloadedState")
+        setUpNavigationBar()
         updateUIAfterDownLoad()
     }
     
@@ -49,7 +49,6 @@ class LessonDetailsController: BaseViewController {
         let lessonView = UIView()
         lessonView.contentMode = .scaleAspectFill
         lessonView.clipsToBounds = true
-        lessonView.backgroundColor = .yellow
         return lessonView
     }()
     
@@ -60,13 +59,12 @@ class LessonDetailsController: BaseViewController {
         return lessonView
     }()
     
-    
     lazy var stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         return stackView
     }()
-
+    
     lazy var downloadButton: UIButton = {
         var downloadButton = UIButton()
         downloadButton.setImage(UIImage(systemName: "icloud.and.arrow.down"), for: .normal)
@@ -102,13 +100,15 @@ class LessonDetailsController: BaseViewController {
         return backButton
     }()
     
-
     override func configureViews() {
         super.configureViews()
         view.addSubviews(lessonView, lpLessonView, stackView)
         stackView.addSubviews(lessonLabel, lessonOverview, nextLessonButton, previousLessonButton)
+        
         lessonView.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, size: CGSize(height: 250))
+        
         lpLessonView.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, size: CGSize(height: 250))
+        
         stackView.anchor(top: lessonView.bottomAnchor, leading: view.leadingAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, trailing: view.trailingAnchor, margin: UIEdgeInsets(allEdges: 20))
         
         lessonLabel.anchor(top: stackView.topAnchor, leading: stackView.leadingAnchor, trailing: stackView.trailingAnchor, margin: .init(top: 20, left: 10, bottom: 10, right: 10))
@@ -118,11 +118,6 @@ class LessonDetailsController: BaseViewController {
         nextLessonButton.anchor(top: lessonOverview.bottomAnchor, trailing: stackView.trailingAnchor, margin: .init(top: 20, left: 0, bottom: 0, right: 0), size: CGSize(width: 140, height: 40))
         
         previousLessonButton.anchor(top: lessonOverview.bottomAnchor, leading: stackView.leadingAnchor, margin: .init(top: 20, left: 0, bottom: 0, right: 0), size: CGSize(width: 140, height: 40))
-    
-    }
-    
-    @objc func clickBackButton() {
-        lessonListViewModel?.onDismiss?()
     }
     
     @objc func cancelDownload() {
@@ -137,10 +132,11 @@ class LessonDetailsController: BaseViewController {
     }
     
     private func setUpNavigationBar() {
-        let downloadIcon = addNavBarButton(button: downloadButton, width: 150)
-        let backButton = addNavBarButton(button: backButton, width: 100)
-        self.navigationItem.rightBarButtonItem = downloadIcon
-        self.navigationItem.leftBarButtonItem = backButton
+        DispatchQueue.main.async {
+            self.parent?.navigationItem.rightBarButtonItem = self.addNavBarButton(button: self.downloadButton, width: 150)
+            self.parent?.navigationItem.titleView = self.cancelButton
+            self.cancelButton.isHidden = true
+        }
     }
     
     private func configureView() {
@@ -149,22 +145,14 @@ class LessonDetailsController: BaseViewController {
         viewTapGesture(view: lpLessonView)
         videoDownloader.model = lessonList?.lesson
         updateUIAfterDownLoad()
-        self.navigationItem.titleView = cancelButton
-        cancelButton.isHidden = true
-        viewModel.willStreamVideo = { player, playerViewController in
-            self.present(playerViewController, animated: true, completion: {
-                player.play()
-            })
-        }
     }
-  
+    
     func onButtonTap() {
         downloadButton.addTarget(self, action: #selector(DidDownloadLessonVideo), for: .touchUpInside)
-       nextLessonButton.addTarget(self, action: #selector(clickNextLessonButton), for: .touchUpInside)
-       previousLessonButton.addTarget(self, action: #selector(clickPreviousLessonButton), for: .touchUpInside)
+        nextLessonButton.addTarget(self, action: #selector(clickNextLessonButton), for: .touchUpInside)
+        previousLessonButton.addTarget(self, action: #selector(clickPreviousLessonButton), for: .touchUpInside)
         self.downloadButton.setImage(UIImage(systemName: "icloud.and.arrow.down"), for: .normal)
         self.downloadButton.setTitle(self.viewModel.isDownloaded(id: Int(lessonList?.lesson.id ?? 0)), for: .normal)
-        backButton.addTarget(self, action: #selector(clickBackButton), for: .touchUpInside)
         cancelButton.addTarget(self, action: #selector(cancelDownload), for: .touchUpInside)
     }
     
@@ -173,27 +161,21 @@ class LessonDetailsController: BaseViewController {
         view.isUserInteractionEnabled = true
         view.addGestureRecognizer(tap)
     }
-
+    
     private func unwrapObjects() {
         if let lessonList {
-            currentCount = lessonList.currentCount
             totalCount = lessonList.totalCount
             arrayOfLesson = lessonList.arrayOfLesson
             lessonVideo = lessonList.lesson.videoUrl ?? ""
+            currentCount = lessonList.currentCount
             initializeView(with: lessonList.lesson)
-            
-            indexNox = arrayOfLesson.firstIndex(of: lessonList.lesson) ?? 0
-            
-            print(currentCount, ":This is current NOW", lessonVideo, ":This is current URL")
-         
         }
-        
     }
     
     func initializeView(with data: StoredLessonModel) {
         lessonLabel.text = data.name
         lessonOverview.text = data.descriptions
-       lessonView.isHidden = true
+        lessonView.isHidden = true
         self.showLoading()
         playVideoCache(url: data.videoUrl ?? "")
         updateUIAfterDownLoad()
@@ -206,6 +188,7 @@ class LessonDetailsController: BaseViewController {
                     if let data {
                         self?.lpLessonView.metadata = data
                         self?.hideLoading()
+                        self?.lessonView.isHidden = false
                     }
                 }
             }
@@ -221,7 +204,7 @@ class LessonDetailsController: BaseViewController {
             initializeView(with: lessonList.lesson)
             
             if lessonList.currentCount != 0 {
-               previousLessonButton.isHidden = false
+                previousLessonButton.isHidden = false
             } else {
                 previousLessonButton.isHidden = true
             }
@@ -229,7 +212,7 @@ class LessonDetailsController: BaseViewController {
             if lessonList.currentCount+1 != lessonList.totalCount {
                 nextLessonButton.isHidden = false
             } else {
-               nextLessonButton.isHidden = true
+                nextLessonButton.isHidden = true
             }
         }
     }
@@ -238,4 +221,3 @@ class LessonDetailsController: BaseViewController {
         super.didReceiveMemoryWarning()
     }
 }
-

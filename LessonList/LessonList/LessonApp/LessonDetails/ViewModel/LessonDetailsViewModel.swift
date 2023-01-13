@@ -15,8 +15,6 @@ protocol LessonDetailProtocol: AnyObject {
 
 final class LessonDetailsViewModel {
     
-    var willStreamVideo: ((_ player: AVPlayer, _ playController: AVPlayerViewController) -> (Void))?
-    var onDismiss: (() -> ())?
     weak var delegate: LessonDetailProtocol?
     let videoDownloader = VideoDownloader()
     var updateUI: (() -> Void)?
@@ -43,14 +41,13 @@ final class LessonDetailsViewModel {
                 let data = try NSKeyedArchiver.archivedData(withRootObject: alreadyDownloadedID, requiringSecureCoding: true)
                 UserDefaults.standard.set(data, forKey: "alreadyDownloadedID")
             } catch {
-                print(error)
+              
             }
         } else {
             let data = NSKeyedArchiver.archivedData(withRootObject: alreadyDownloadedID)
             UserDefaults.standard.set(data, forKey: "alreadyDownloadedID")
         }
     }
-    
     
     func getDataFromUserDefault() {
         if let data = UserDefaults.standard.object(forKey: "alreadyDownloadedID") as? Data {
@@ -68,24 +65,20 @@ final class LessonDetailsViewModel {
         }
     }
     
-    func playVideo_Stream_Video(urlString: String) {
+    func playVideo_Downloaded_Video(urlString: String) {
         let docsUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         let destinationUrl = docsUrl.appendingPathComponent("\(urlString).mp4")
         
         if (FileManager().fileExists(atPath: destinationUrl.path)) {
             let baseUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-            print("found oo")
             let assetUrl = baseUrl.appendingPathComponent("\(urlString).mp4")
             let url = assetUrl
-            print(url)
             let avAssest = AVAsset(url: url)
             let playerItem = AVPlayerItem(asset: avAssest)
             let player = AVPlayer(playerItem: playerItem)
             let playerViewController = AVPlayerViewController()
             playerViewController.player = player
-            willStreamVideo?(player, playerViewController)
-        } else {
-            delegate?.streamVideo(url: urlString)
         }
     }
 }
+

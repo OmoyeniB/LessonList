@@ -13,7 +13,7 @@ import Reachability
 protocol LessonListViewModelProtocol {
     var lessonList: [Lesson] { get set }
     var storedLessonModel: [StoredLessonModel] { get set }
-    var onDismiss: (() -> ())? { get set }
+    var onDismiss:((Int) -> (Void))? { get set }
     var showError: ((Error) -> Void)? { get set }
     var showLessonList: ((Bool) -> Void)? { get set }
     func fetchNetworkResult()
@@ -22,9 +22,10 @@ protocol LessonListViewModelProtocol {
 
 class LessonListViewModel: LessonListViewModelProtocol, ObservableObject {
     
+    var intPassed:((Int) -> Void)?
     var lessonList: [Lesson] = []
     var showLessonList: ((Bool) -> Void)?
-    var onDismiss: (() -> ())?
+    var onDismiss: ((Int) -> (Void))?
     let reachability = try! Reachability()
     fileprivate var networkResult: LessonNetworkServiceProtocol
     private var subscribers = Set<AnyCancellable>()
