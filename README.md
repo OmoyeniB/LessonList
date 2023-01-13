@@ -37,7 +37,7 @@ Some screenshots of the app are shown below:
 <img width="236" alt="Screenshot 2023-01-11 at 13 00 47" src="https://user-images.githubusercontent.com/92518636/212325059-cc7e253a-6e52-4ee8-bf3b-527d3cc6e38d.png">
 
 ### Lesson Details Page 
-![Simulator Screen Shot - iPhone X - 2023-01-12 at 16 15 16](https://user-images.githubusercontent.com/92518636/212324931-99626c2b-f51f-4c8d-bfe6-13ce2b56625a.png)
+![Simulator Screen Shot - iPhone X - 2023-01-13 at 13 56 32](https://user-images.githubusercontent.com/92518636/212325356-f53175ba-2fe4-4136-bb79-df6342a5489a.png)
 
 
 
