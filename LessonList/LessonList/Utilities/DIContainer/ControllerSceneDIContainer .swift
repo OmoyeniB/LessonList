@@ -18,12 +18,12 @@ final class ControllerSceneDIContainer {
         return vc
     }
     
-    func makeDetailPageInjectable() -> UINavigationController {
+    func makeDetailPageInjectable() -> LessonDetailsController {
         let vc = LessonDetailsController()
-        let navigationController = UINavigationController(rootViewController: vc)
+//        let navigationController = UINavigationController(rootViewController: vc)
         vc.lessonList = movieList
-        vc.lessonListViewModel = lessonListViewModel
-        return navigationController
+//        vc.lessonListViewModel = lessonListViewModel
+        return vc
     }
 
 
