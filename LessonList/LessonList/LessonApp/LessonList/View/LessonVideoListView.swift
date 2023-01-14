@@ -9,11 +9,10 @@ import SwiftUI
 
 struct LessonVideoListView: View {
     
-    @State var showUIKitViewController: Bool = false
-    @State private var currentCount: Int = 0
+    @State var displayAlert: Bool = false
     @StateObject var viewModel = LessonListViewModel(networkResult: LessonNetworkService())
-    var lessonList: [StoredLessonModel] = [StoredLessonModel]()
     var blackColor = "BlackColor"
+    @State var errorString: String? = nil
     
     var body: some View {
         if #available(iOS 14.0, *) {
@@ -37,10 +36,12 @@ struct LessonVideoListView: View {
                                     .foregroundColor(Color.blue)
                                 Spacer()
                             }
+                            
                         }
                         .listRowBackground(Color(blackColor))
                         .foregroundColor(Color.clear)
                         .background(Color(blackColor))
+      
                     }
                     .modifier(ListBackgroundModifier())
                     .listStyle(.insetGrouped)
@@ -49,14 +50,16 @@ struct LessonVideoListView: View {
                         .font(.largeTitle)
                         .fontWeight(.bold)
                     )
-                   
                     .onAppear(perform: {
                         viewModel.onViewDidLoad()
-                        viewModel.onDismiss = { int in
-                            showUIKitViewController = false
+                        viewModel.showError = { error in
+                            errorString = error.localizedDescription
+                            self.displayAlert = true
                         }
                     })
-                    
+                }
+                .alert(isPresented: $displayAlert) {
+                    Alert(title: Text("Alert"), message: Text(errorString ?? ""), dismissButton: .default(Text("OK")))
                 }
             }
         } else {
@@ -73,5 +76,4 @@ struct LessonVideoListView_Previews: PreviewProvider {
         LessonVideoListView()
     }
 }
-
 

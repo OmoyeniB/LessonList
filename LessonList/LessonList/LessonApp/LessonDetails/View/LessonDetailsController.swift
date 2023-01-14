@@ -35,6 +35,7 @@ class LessonDetailsController: BaseViewController {
         configureView()
         unwrapObjects()
         onButtonTap()
+      
         view.backgroundColor = UIColor(named: "BlackColor")
     }
     

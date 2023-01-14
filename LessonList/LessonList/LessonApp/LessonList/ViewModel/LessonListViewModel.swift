@@ -22,6 +22,7 @@ protocol LessonListViewModelProtocol {
 
 class LessonListViewModel: LessonListViewModelProtocol, ObservableObject {
     
+    var notifyAlert: Bool = false
     var intPassed:((Int) -> Void)?
     var lessonList: [Lesson] = []
     var showLessonList: ((Bool) -> Void)?
@@ -30,6 +31,11 @@ class LessonListViewModel: LessonListViewModelProtocol, ObservableObject {
     fileprivate var networkResult: LessonNetworkServiceProtocol
     private var subscribers = Set<AnyCancellable>()
     var showError: ((Error) -> Void)?
+    var ifNetworkHasBeenSuccessfullyMade: Bool = false {
+        didSet {
+            setToTrueIfNetworkCallHasBeenMade()
+        }
+    }
     
     @Published var storedLessonModel: [StoredLessonModel] = []
    
@@ -51,6 +57,7 @@ class LessonListViewModel: LessonListViewModelProtocol, ObservableObject {
                 }, receiveValue: { data in
                     self.lessonList = data.lessons
                     self.showLessonList?(true)
+                    self.ifNetworkHasBeenSuccessfullyMade = true
                     if !(self.storedLessonModel.count > 0) {
                         self.saveToCoreData(lessonList: data.lessons)
                     } else {
@@ -82,6 +89,10 @@ class LessonListViewModel: LessonListViewModelProtocol, ObservableObject {
         }
     }
 
+    func setToTrueIfNetworkCallHasBeenMade() {
+        UserDefaults.standard.set(self.ifNetworkHasBeenSuccessfullyMade, forKey: "errorShow")
+    }
+    
     func fetchDataFromCoreData() {
         let fetchRequest: NSFetchRequest<StoredLessonModel> = StoredLessonModel.fetchRequest()
         let storedIds = self.storedLessonModel.map { Int($0.id) }
@@ -89,7 +100,7 @@ class LessonListViewModel: LessonListViewModelProtocol, ObservableObject {
         fetchRequest.returnsDistinctResults = true
             do {
                 let newStoredLessonModel = try PersistenceService.context.fetch(fetchRequest)
-                if storedLessonModel != newStoredLessonModel {
+                if !(storedLessonModel.count > 0) {
                     self.storedLessonModel = newStoredLessonModel
                 }
             } catch {
@@ -104,13 +115,27 @@ class LessonListViewModel: LessonListViewModelProtocol, ObservableObject {
             }
         }
         reachability.whenUnreachable = { _ in
-            self.fetchDataFromCoreData()
+            if self.readSavedState() == true {
+                self.fetchDataFromCoreData()
+            } else {
+                self.fetchNetworkResult()
+            print("show alert")
+            }
         }
 
         do {
             try reachability.startNotifier()
         } catch {
             print("Unable to start notifier")
+        }
+    }
+    
+    func readSavedState() -> Bool {
+        self.ifNetworkHasBeenSuccessfullyMade = UserDefaults.standard.bool(forKey: "errorShow")
+        if self.ifNetworkHasBeenSuccessfullyMade == true {
+            return true
+        } else {
+            return false
         }
     }
     
