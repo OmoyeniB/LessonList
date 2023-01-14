@@ -100,9 +100,7 @@ class LessonListViewModel: LessonListViewModelProtocol, ObservableObject {
         fetchRequest.returnsDistinctResults = true
             do {
                 let newStoredLessonModel = try PersistenceService.context.fetch(fetchRequest)
-                if !(storedLessonModel.count > 0) {
-                    self.storedLessonModel = newStoredLessonModel
-                }
+                self.storedLessonModel = uniqueObjects(array: newStoredLessonModel, idKey: \.id)
             } catch {
                 print("Error fetching data from Core Data")
             }
@@ -140,3 +138,17 @@ class LessonListViewModel: LessonListViewModelProtocol, ObservableObject {
     }
     
 }
+
+func uniqueObjects(array: [StoredLessonModel], idKey: KeyPath<StoredLessonModel, Int16>) -> [StoredLessonModel] {
+    var uniqueObjects = [StoredLessonModel]()
+    var seenIds = Set<Int16>()
+    for object in array {
+        let id = object[keyPath: idKey]
+        if !seenIds.contains(id) {
+            uniqueObjects.append(object)
+            seenIds.insert(id)
+        }
+    }
+    return uniqueObjects
+}
+
