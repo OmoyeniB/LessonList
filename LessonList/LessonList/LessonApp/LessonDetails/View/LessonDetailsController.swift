@@ -15,18 +15,16 @@ class LessonDetailsController: BaseViewController {
     
     let videoDownloader = VideoDownloader()
     let viewModel = LessonDetailsViewModel()
-    var lessonListViewModel: LessonListViewModel? = nil
     let metaProvider = LPMetadataProvider()
     var lessonList: (lesson: StoredLessonModel, arrayOfLesson: [StoredLessonModel], totalCount: Int, currentCount: Int)?
-    var currentCount = 0
+    var currentCount: Int = 0
     var lessonVideo: String = ""
-    var totalCount = 0
+    var totalCount: Int = 0
     var arrayOfLesson = [StoredLessonModel]()
     var updateDownloadButton: Bool = false
     var savedID = [Int]()
     var isNextLessonClicked: Bool = false
     var isPreviousLessonClicked: Bool = false
-    var indexNox = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,21 +33,31 @@ class LessonDetailsController: BaseViewController {
         configureView()
         unwrapObjects()
         onButtonTap()
-      
+        viewModel.delegate = self
         view.backgroundColor = UIColor(named: "BlackColor")
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         updateDownloadButton = UserDefaults.standard.bool(forKey: "downloadedState")
+        
         setUpNavigationBar()
         updateUIAfterDownLoad()
+    }
+    
+    func hideUnHideView(id: Int) {
+        if viewModel.isDownloaded(id: id) == "Download" {
+            self.lessonView.isHidden = true
+        } else if viewModel.isDownloaded(id: id) == "Downloaded" {
+            self.lessonView.isHidden = false
+        }
     }
     
     lazy var lessonView: UIView = {
         let lessonView = UIView()
         lessonView.contentMode = .scaleAspectFill
         lessonView.clipsToBounds = true
+        lessonView.backgroundColor = .clear
         return lessonView
     }()
     
@@ -103,12 +111,12 @@ class LessonDetailsController: BaseViewController {
     
     override func configureViews() {
         super.configureViews()
-        view.addSubviews(lessonView, lpLessonView, stackView)
+        view.addSubviews(lpLessonView, lessonView, stackView)
         stackView.addSubviews(lessonLabel, lessonOverview, nextLessonButton, previousLessonButton)
         
-        lessonView.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, size: CGSize(height: 250))
-        
         lpLessonView.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, size: CGSize(height: 250))
+        
+        lessonView.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, size: CGSize(height: 250))
         
         stackView.anchor(top: lessonView.bottomAnchor, leading: view.leadingAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, trailing: view.trailingAnchor, margin: UIEdgeInsets(allEdges: 20))
         
@@ -143,7 +151,6 @@ class LessonDetailsController: BaseViewController {
     private func configureView() {
         show_hide_Button()
         viewTapGesture(view: lessonView)
-        viewTapGesture(view: lpLessonView)
         videoDownloader.model = lessonList?.lesson
         updateUIAfterDownLoad()
     }
@@ -176,10 +183,10 @@ class LessonDetailsController: BaseViewController {
     func initializeView(with data: StoredLessonModel) {
         lessonLabel.text = data.name
         lessonOverview.text = data.descriptions
-        lessonView.isHidden = true
         self.showLoading()
         playVideoCache(url: data.videoUrl ?? "")
         updateUIAfterDownLoad()
+        hideUnHideView(id: Int(data.id))
     }
     
     func playVideoCache(url: String) {
@@ -189,7 +196,6 @@ class LessonDetailsController: BaseViewController {
                     if let data {
                         self?.lpLessonView.metadata = data
                         self?.hideLoading()
-                        self?.lessonView.isHidden = false
                     }
                 }
             }

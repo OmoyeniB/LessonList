@@ -10,7 +10,7 @@ import LinkPresentation
 import AVKit
 
 protocol LessonDetailProtocol: AnyObject {
-    func streamVideo(url: String)
+    func playDownloadedVideo(avPlayer: AVPlayer, playerViewController: AVPlayerViewController)
 }
 
 final class LessonDetailsViewModel {
@@ -64,21 +64,13 @@ final class LessonDetailsViewModel {
             return "Download"
         }
     }
-    
-    func playVideo_Downloaded_Video(urlString: String) {
-        let docsUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        let destinationUrl = docsUrl.appendingPathComponent("\(urlString).mp4")
-        
-        if (FileManager().fileExists(atPath: destinationUrl.path)) {
-            let baseUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-            let assetUrl = baseUrl.appendingPathComponent("\(urlString).mp4")
-            let url = assetUrl
-            let avAssest = AVAsset(url: url)
-            let playerItem = AVPlayerItem(asset: avAssest)
-            let player = AVPlayer(playerItem: playerItem)
-            let playerViewController = AVPlayerViewController()
-            playerViewController.player = player
-        }
+
+    func presentDownloadedVideo(path: String) {
+        let documentsFolder = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: false)
+        let videoURL = documentsFolder.appendingPathComponent("\(path).mp4")
+        let player = AVPlayer(url: videoURL)
+        let playerViewController = AVPlayerViewController()
+        delegate?.playDownloadedVideo(avPlayer: player, playerViewController: playerViewController)
     }
 }
 

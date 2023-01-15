@@ -7,6 +7,8 @@
 
 import UIKit
 import AVFoundation
+import LinkPresentation
+import AVKit
 
 extension LessonDetailsController {
     
@@ -17,21 +19,23 @@ extension LessonDetailsController {
                 switch result {
                 case .success(_):
                     self.viewModel.downloadState = true
-                            self.updateUIAfterDownLoad()
-                            self.viewModel.alreadyDownloadedID.append(Int(self.lessonList?.lesson.id ?? 0))
-                            self.viewModel.getDataFromUserDefault()
-                            if self.savedID.contains(Int(self.lessonList?.lesson.id ?? 0)) {
-                                
-                            } else {
-                                self.downloadButton.setTitle(self.viewModel.isDownloaded(id: Int(self.lessonList?.lesson.id ?? 0)), for: .normal)
-                            }
-                        case .failure(let error):
-                            self.displayAlert(title: "Download Alert", message: error.localizedDescription, type: .error, action: nil)
-                            self.viewModel.downloadState = false
-                        }
+                    self.updateUIAfterDownLoad()
+                    self.viewModel.alreadyDownloadedID.append(Int(self.lessonList?.lesson.id ?? 0))
+                    self.viewModel.getDataFromUserDefault()
+                    if self.savedID.contains(Int(self.lessonList?.lesson.id ?? 0)) {
+                        
+                    } else {
+                        self.downloadButton.setTitle(self.viewModel.isDownloaded(id: Int(self.lessonList?.lesson.id ?? 0)), for: .normal)
+                        self.hideUnHideView(id: Int(self.lessonList?.lesson.id ?? 0))
+                        self.cancelButton.isHidden = true
                     }
-                })
-        }
+                case .failure(let error):
+                    self.displayAlert(title: "Download Alert", message: error.localizedDescription, type: .error, action: nil)
+                    self.viewModel.downloadState = false
+                }
+            }
+        })
+    }
     
     @objc func DidDownloadLessonVideo() {
         if !savedID.contains(Int(self.arrayOfLesson[self.currentCount].id)) {
@@ -43,11 +47,12 @@ extension LessonDetailsController {
                     self?.downloadButton.setTitle(String(prog), for: .normal)
                 }
             }
-           
+            
         }
     }
     
     @objc func clickPreviousLessonButton() {
+        
         if currentCount != 0 {
             showLoading()
             self.nextLessonButton.isHidden = false
@@ -58,6 +63,9 @@ extension LessonDetailsController {
                     self.updateCancelButton(int: Int(self.arrayOfLesson[self.currentCount - 1].id))
                     let title = self.viewModel.isDownloaded(id: Int(self.arrayOfLesson[self.currentCount - 1].id))
                     self.updateViewConfig()
+                    if title == "Downloaded" {
+                        self.lessonView.isHidden = false
+                    }
                     self.downloadButton.setTitle(title, for: .normal)
                     self.currentCount -= 1
                     self.previousLessonButton.isHidden = false
@@ -79,8 +87,11 @@ extension LessonDetailsController {
                     self.initializeView(with: self.arrayOfLesson[self.currentCount + 1])
                     self.updateCancelButton(int: Int(self.arrayOfLesson[self.currentCount + 1].id))
                     let title = self.viewModel.isDownloaded(id: Int(self.arrayOfLesson[self.currentCount + 1].id))
-                    self.downloadButton.setTitle(title, for: .normal)
+                    if title == "Downloaded" {
+                        self.lessonView.isHidden = false
+                    }
                     self.updateViewConfig()
+                    self.downloadButton.setTitle(title, for: .normal)
                     self.currentCount += 1
                     if self.currentCount + 1 == self.totalCount {
                         self.nextLessonButton.isHidden = true
@@ -93,27 +104,25 @@ extension LessonDetailsController {
     func updateViewConfig() {
         viewModel.getDataFromUserDefault()
         updateUIAfterDownLoad()
-        cancelButton.isHidden = true
     }
     
     @objc func labelTapped(_ sender: UITapGestureRecognizer) {
-        lpLessonView.isHidden = true
-        print("lpwill Hide3333")
-//                playVideo_Stream_Video()
+        viewModel.presentDownloadedVideo(path: lessonList?.lesson.name ?? "")
     }
+    
     
 }
 
 extension LessonDetailsController: LessonDetailProtocol {
-   
     
-    func streamVideo(url: String) {
-        playVideoCache(url: url)
+    func playDownloadedVideo(avPlayer: AVPlayer, playerViewController: AVPlayerViewController) {
+        
+        playerViewController.player = avPlayer
+        present(playerViewController, animated: true) {
+            avPlayer.play()
+        }
     }
-    
-//    present(playerController, animated: true) {
-//                player.play()
-//            }
+
 }
 
 

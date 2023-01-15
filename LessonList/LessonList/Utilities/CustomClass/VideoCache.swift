@@ -23,7 +23,7 @@ class VideoCache {
     }
     
     final func load(url: NSURL, completion: @escaping ((LPLinkMetadata?) -> Void)) {
-        if  hasSavedUrl(url: url) {
+        if hasSavedUrl(url: url) {
             let savedMetadata = self.getMetadataFromSavedUrl(url: url)
             completion(savedMetadata)
             return
